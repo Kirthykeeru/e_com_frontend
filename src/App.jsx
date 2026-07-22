@@ -12,7 +12,8 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import NavBar from './components/NavBar';
 
 const ProtectedRoute = ({ children, role }) => {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
+  if (initializing) return null;
   if (!user) return <Navigate to="/login" />;
   if (role && user.role !== role) return <Navigate to="/" />;
   return children;
