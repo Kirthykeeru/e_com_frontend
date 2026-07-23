@@ -1,41 +1,64 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import api from '../utils/api';
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  // Starts true; hard-reload must never redirect to /login before this becomes false.
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    const savedToken = localStorage.getItem('token');
-    if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
-      setToken(savedToken);
+    try {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (err) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } finally {
+      setInitializing(false);
     }
-    setInitializing(false);
   }, []);
 
-  const login = (userData, authToken) => {
-    setUser(userData);
-    setToken(authToken);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', authToken);
-  };
+  const login = useCallback(async (email, password) => {
+    const res = await api.post('/auth/login', { email, password });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setToken(res.data.token);
+    setUser(res.data.user);
+    return res.data.user;
+  }, []);
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('user');
+  const register = useCallback(async (name, email, password) => {
+    const res = await api.post('/auth/register', { name, email, password });
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setToken(res.data.token);
+    setUser(res.data.user);
+    return res.data.user;
+  }, []);
+
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
-  };
+    localStorage.removeItem('user');
+    setToken(null);
+    setUser(null);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, initializing }}>
+    <AuthContext.Provider value={{ user, token, initializing, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
+  return ctx;
+}

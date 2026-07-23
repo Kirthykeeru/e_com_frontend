@@ -1,69 +1,69 @@
-import { useEffect, useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Box, CssBaseline, Container, Snackbar, Alert } from '@mui/material';
-import { io } from 'socket.io-client';
-import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
-import ProductsPage from './components/ProductsPage';
-import CartPage from './components/CartPage';
-import OrdersPage from './components/OrdersPage';
-import AdminDashboard from './components/AdminDashboard';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import NavBar from './components/NavBar';
-
-const ProtectedRoute = ({ children, role }) => {
-  const { user, initializing } = useAuth();
-  if (initializing) return null;
-  if (!user) return <Navigate to="/login" />;
-  if (role && user.role !== role) return <Navigate to="/" />;
-  return children;
-};
+import { Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
+import ProtectedRoute from './routes/ProtectedRoute';
+import NavBar from './components/layout/NavBar';
+import NotificationSnackbar from './components/layout/NotificationSnackbar';
+import LoginPage from './components/auth/LoginPage';
+import RegisterPage from './components/auth/RegisterPage';
+import ProductsPage from './components/products/ProductsPage';
+import CartPage from './components/cart/CartPage';
+import OrdersPage from './components/orders/OrdersPage';
+import OrderDetail from './components/orders/OrderDetail';
+import AdminDashboard from './components/admin/AdminDashboard';
 
 function AppContent() {
-  const { user } = useAuth();
-  const [notification, setNotification] = useState(null);
-
-  useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_BASE_URL.replace('/api', ''), {
-      transports: ['websocket'],
-    });
-
-    socket.on('newOrder', (payload) => {
-      if (user?.role === 'admin') {
-        setNotification(`New order #${payload.orderId} total $${payload.total}`);
-      }
-    });
-
-    return () => socket.disconnect();
-  }, [user]);
-
   return (
-    <Box>
-      <CssBaseline />
+    <>
       <NavBar />
-      <Container sx={{ mt: 3 }}>
-        <Routes>
-          <Route path="/" element={<ProductsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
-          <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-        </Routes>
-      </Container>
-      <Snackbar open={!!notification} autoHideDuration={5000} onClose={() => setNotification(null)}>
-        <Alert severity="info" onClose={() => setNotification(null)}>
-          {notification}
-        </Alert>
-      </Snackbar>
-    </Box>
+      <NotificationSnackbar />
+      <Routes>
+        <Route path="/" element={<ProductsPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <OrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:orderId"
+          element={
+            <ProtectedRoute>
+              <OrderDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
   );
 }
 
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </AuthProvider>
   );
 }
