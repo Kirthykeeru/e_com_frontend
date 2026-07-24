@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { connectAdminSocket, disconnectSocket } from '../../utils/socket';
+import { formatCurrency } from '../../utils/currency';
 
 export default function NotificationSnackbar() {
   const { user, token } = useAuth();
@@ -12,7 +13,7 @@ export default function NotificationSnackbar() {
 
     const socket = connectAdminSocket(token);
     const handleNewOrder = (payload) => {
-      setNotification(`New order #${payload.orderId} from ${payload.buyerName} — $${Number(payload.total).toFixed(2)}`);
+      setNotification(`New order #${payload.orderId} from ${payload.buyerName} — ${formatCurrency(payload.total)}`);
     };
     socket.on('newOrder', handleNewOrder);
 

@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import api, { getErrorMessage } from '../../utils/api';
+import { formatCurrency } from '../../utils/currency';
 
 export default function PriceOverrideTab() {
   const [users, setUsers] = useState([]);
@@ -95,7 +96,7 @@ export default function PriceOverrideTab() {
       {selectedUserId && (
         <>
           <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>
-            <Grid size={{ xs: 12, sm: 5 }}>
+            <Grid item xs={12} sm={5}>
               <TextField
                 select
                 label="Product"
@@ -105,12 +106,12 @@ export default function PriceOverrideTab() {
               >
                 {products.map((p) => (
                   <MenuItem key={p.id} value={p.id}>
-                    {p.name} (base ${Number(p.base_price).toFixed(2)})
+                    {p.name} (base {formatCurrency(p.base_price)})
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
-            <Grid size={{ xs: 8, sm: 4 }}>
+            <Grid item xs={8} sm={4}>
               <TextField
                 label="Override price"
                 type="number"
@@ -119,7 +120,7 @@ export default function PriceOverrideTab() {
                 fullWidth
               />
             </Grid>
-            <Grid size={{ xs: 4, sm: 3 }}>
+            <Grid item xs={4} sm={3}>
               <Button variant="contained" fullWidth disabled={!selectedProductId || !overridePrice} onClick={handleAdd}>
                 Set
               </Button>
@@ -139,7 +140,7 @@ export default function PriceOverrideTab() {
                 {overrides.map((o) => (
                   <TableRow key={o.id}>
                     <TableCell>{productName(o.product_id)}</TableCell>
-                    <TableCell align="right">${Number(o.override_price).toFixed(2)}</TableCell>
+                    <TableCell align="right">{formatCurrency(o.override_price)}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={() => handleRemove(o.id)} aria-label="remove override">
                         <DeleteIcon />

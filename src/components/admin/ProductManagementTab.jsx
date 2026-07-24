@@ -19,6 +19,7 @@ import {
   Box,
 } from '@mui/material';
 import api, { getErrorMessage } from '../../utils/api';
+import { formatCurrency } from '../../utils/currency';
 
 const emptyForm = { name: '', description: '', imageUrl: '', basePrice: '', quantity: '' };
 
@@ -110,7 +111,7 @@ export default function ProductManagementTab() {
             {products.map((p) => (
               <TableRow key={p.id}>
                 <TableCell>{p.name}</TableCell>
-                <TableCell align="right">${Number(p.base_price).toFixed(2)}</TableCell>
+                <TableCell align="right">{formatCurrency(p.base_price)}</TableCell>
                 <TableCell align="right">{p.quantity}</TableCell>
                 <TableCell align="center">
                   <Switch checked={Boolean(p.active)} onChange={() => toggleActive(p)} />

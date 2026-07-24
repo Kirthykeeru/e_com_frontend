@@ -6,6 +6,7 @@ import NavBar from './components/layout/NavBar';
 import NotificationSnackbar from './components/layout/NotificationSnackbar';
 import LoginPage from './components/auth/LoginPage';
 import RegisterPage from './components/auth/RegisterPage';
+import HomePage from './components/home/HomePage';
 import ProductsPage from './components/products/ProductsPage';
 import CartPage from './components/cart/CartPage';
 import OrdersPage from './components/orders/OrdersPage';
@@ -18,7 +19,8 @@ function AppContent() {
       <NavBar />
       <NotificationSnackbar />
       <Routes>
-        <Route path="/" element={<ProductsPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/products" element={<ProductsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route

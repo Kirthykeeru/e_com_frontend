@@ -15,6 +15,7 @@ import {
   Link,
 } from '@mui/material';
 import api, { getErrorMessage } from '../../utils/api';
+import { formatCurrency } from '../../utils/currency';
 
 const STATUS_COLORS = {
   pending: 'default',
@@ -73,7 +74,7 @@ export default function OrdersPage() {
                     </Link>
                   </TableCell>
                   <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
-                  <TableCell align="right">${Number(order.total).toFixed(2)}</TableCell>
+                  <TableCell align="right">{formatCurrency(order.total)}</TableCell>
                   <TableCell>
                     <Chip label={order.status} size="small" color={STATUS_COLORS[order.status] || 'default'} />
                   </TableCell>

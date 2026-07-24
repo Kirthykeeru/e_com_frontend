@@ -13,6 +13,7 @@ import {
   Alert,
 } from '@mui/material';
 import api, { getErrorMessage } from '../../utils/api';
+import { formatCurrency } from '../../utils/currency';
 
 export default function OrderDetail() {
   const { orderId } = useParams();
@@ -59,9 +60,9 @@ export default function OrderDetail() {
               {items.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.name}</TableCell>
-                  <TableCell align="right">${Number(item.price).toFixed(2)}</TableCell>
+                  <TableCell align="right">{formatCurrency(item.price)}</TableCell>
                   <TableCell align="center">{item.quantity}</TableCell>
-                  <TableCell align="right">${(item.price * item.quantity).toFixed(2)}</TableCell>
+                  <TableCell align="right">{formatCurrency(item.price * item.quantity)}</TableCell>
                 </TableRow>
               ))}
               <TableRow>
@@ -69,7 +70,7 @@ export default function OrderDetail() {
                   <strong>Total</strong>
                 </TableCell>
                 <TableCell align="right">
-                  <strong>${total.toFixed(2)}</strong>
+                  <strong>{formatCurrency(total)}</strong>
                 </TableCell>
               </TableRow>
             </TableBody>

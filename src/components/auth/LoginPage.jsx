@@ -18,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/products');
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

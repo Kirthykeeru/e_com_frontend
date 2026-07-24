@@ -13,6 +13,7 @@ import {
   Alert,
 } from '@mui/material';
 import api, { getErrorMessage } from '../../utils/api';
+import { formatCurrency } from '../../utils/currency';
 
 const STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 const STATUS_COLORS = {
@@ -69,7 +70,7 @@ export default function OrdersTab() {
                   <small>{order.buyer_email}</small>
                 </TableCell>
                 <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
-                <TableCell align="right">${Number(order.total).toFixed(2)}</TableCell>
+                <TableCell align="right">{formatCurrency(order.total)}</TableCell>
                 <TableCell>
                   <Select
                     value={order.status}

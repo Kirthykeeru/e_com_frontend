@@ -19,6 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import api, { getErrorMessage } from '../../utils/api';
+import { formatCurrency } from '../../utils/currency';
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, clear, total } = useCart();
@@ -53,7 +54,7 @@ export default function CartPage() {
         <Typography variant="h5" gutterBottom>
           Your cart is empty
         </Typography>
-        <Button variant="contained" onClick={() => navigate('/')}>
+        <Button variant="contained" onClick={() => navigate('/products')}>
           Browse products
         </Button>
       </Container>
@@ -81,7 +82,7 @@ export default function CartPage() {
             {items.map((item) => (
               <TableRow key={item.productId}>
                 <TableCell>{item.name}</TableCell>
-                <TableCell align="right">${item.price.toFixed(2)}</TableCell>
+                <TableCell align="right">{formatCurrency(item.price)}</TableCell>
                 <TableCell align="center">
                   <TextField
                     type="number"
@@ -91,7 +92,7 @@ export default function CartPage() {
                     inputProps={{ min: 0, style: { width: 60, textAlign: 'center' } }}
                   />
                 </TableCell>
-                <TableCell align="right">${(item.price * item.quantity).toFixed(2)}</TableCell>
+                <TableCell align="right">{formatCurrency(item.price * item.quantity)}</TableCell>
                 <TableCell align="right">
                   <IconButton onClick={() => removeItem(item.productId)} aria-label="remove">
                     <DeleteIcon />
@@ -104,7 +105,7 @@ export default function CartPage() {
       </Paper>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3, alignItems: 'center', gap: 2 }}>
-        <Typography variant="h6">Total: ${total.toFixed(2)}</Typography>
+        <Typography variant="h6">Total: {formatCurrency(total)}</Typography>
         <Button variant="contained" size="large" disabled={placing} onClick={handlePlaceOrder}>
           {placing ? 'Placing order…' : 'Place order'}
         </Button>

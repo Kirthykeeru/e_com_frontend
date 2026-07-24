@@ -19,7 +19,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      navigate('/');
+      navigate('/products');
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

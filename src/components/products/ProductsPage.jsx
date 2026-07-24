@@ -29,9 +29,9 @@ export default function ProductsPage() {
     };
   }, []);
 
-  const handleAddToCart = (product) => {
-    addItem(product, 1);
-    setConfirmation(`Added "${product.name}" to cart`);
+  const handleAddToCart = (product, quantity) => {
+    addItem(product, quantity);
+    setConfirmation(`Added ${quantity} × "${product.name}" to cart`);
   };
 
   if (loading) {
@@ -44,13 +44,13 @@ export default function ProductsPage() {
 
   return (
     <Container sx={{ mt: 4, mb: 6 }}>
-      <Typography variant="h4" fontWeight={600} gutterBottom>
+      <Typography variant="h4" fontWeight={600} sx={{ mb: 4 }}>
         Products
       </Typography>
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       <Grid container spacing={3}>
         {products.map((product) => (
-          <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+          <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
             <ProductCard product={product} onAddToCart={handleAddToCart} />
           </Grid>
         ))}
